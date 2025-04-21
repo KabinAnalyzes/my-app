@@ -337,7 +337,7 @@ const Portfolio = () => {
                     <IconButton
                       color="primary"
                       aria-label="email"
-                      href="mailto:YOUR_EMAIL@example.com"
+                      href="mailto:kvn.loun@gmail.com"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
