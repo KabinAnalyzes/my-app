@@ -280,7 +280,7 @@ const Portfolio = () => {
                 >
                   <Avatar
                     alt="Your Profile Picture"
-                    src="PFP.jpg"// Update this path
+                    src="/PFP.JPG"// Update this path
                     sx={{
                       width: 250,
                       height: 250,
