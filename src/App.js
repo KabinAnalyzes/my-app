@@ -419,6 +419,10 @@ const Portfolio = () => {
                         <PythonIcon sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
                         Python
                       </Typography>
+                      <Typography variant="body1">
+                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
+                        Java
+                      </Typography>
                    </Stack>
                  </Paper>
                </motion.div>
@@ -441,7 +445,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       IMS (Optional)
+                       IMS 
                      </Typography>
                    </Stack>
                  </Paper>
@@ -487,7 +491,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       QMF (Optional)
+                       QMF 
                      </Typography>
                    </Stack>
                  </Paper>
@@ -506,7 +510,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       Agile (if applicable)
+                       Agile 
                      </Typography>
                    </Stack>
                  </Paper>
