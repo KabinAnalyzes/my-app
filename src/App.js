@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react'; // Import useRef
 import {
   AppBar,
   Toolbar,
@@ -12,12 +12,14 @@ import {
   Tooltip,
   Stack,
   // Divider, // Removed if not used elsewhere
+  Fade // Import Fade for smooth entry
 } from '@mui/material';
 import { LinkedIn, GitHub, Email, School, Code, TrendingUp } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import { SvgIcon } from '@mui/material';
-
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 // --- THEME, ANIMATIONS, ICONS remain the same ---
 // Custom theme (remains the same)
 const theme = createTheme({
@@ -204,11 +206,81 @@ const PythonIcon = (props) => (
 );
 // --- END of unchanged sections ---
 
+// --- PROJECT DATA ---
+const projectsData = [
+  {
+    title: 'Shinjuku Object Detection',
+    description:
+      'The Shibuya Crossing Pedestrian Detector is a deep learning project aimed at detecting pedestrians crossing the street at the iconic Shibuya Crossing in Tokyo. This project utilizes state-of-the-art object detection techniques to identify pedestrians in real-time footage. The project was coded in Python and the model is trained using the CrowdHuman dataset then fine-tuned using the MMdetection framework for transfer learning.',
+    link: 'https://github.com/your-github/shinjuku-object-detection', // Add your actual project link
+  },
+  {
+    title: 'Petal Planner 🌱',
+    description:
+      'A web application built with Python Flask (backend) and HTML/CSS (frontend) designed to boost productivity through daily motivational quotes and a gamified to-do list. Users can sign up and log in securely via OAuth, with encrypted credentials stored in a SQL database. Each completed task helps grow a personalized digital plant, turning productivity into a thriving virtual garden.',
+    link: 'https://github.com/your-github/petal-planner', // Add your actual project link
+  },
+  {
+    title: 'Another Cool Project', // Add more projects
+    description:
+      'Description for another cool project. Detail the technologies used and the purpose of the project.',
+    link: 'https://github.com/your-github/another-project', // Add your actual project link
+  },
+    {
+    title: 'Yet Another Project', // Add more projects
+    description:
+      'Description for yet another project. Detail the technologies used and the purpose of the project.',
+    link: 'https://github.com/your-github/yet-another-project', // Add your actual project link
+  },
+];
+
+// Define a consistent height for each project item in the carousel
+const PROJECT_ITEM_HEIGHT = 300; // Adjust as needed
 
 const Portfolio = () => {
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const carouselRef = useRef(null); // Ref for the carousel container
+  const autoScrollIntervalRef = useRef(null); // Ref for the interval ID
 
+  // Function to move to the next project
+  const moveToNextProject = () => {
+    setActiveProjectIndex((prevIndex) => (prevIndex + 1) % projectsData.length);
+  };
+
+  // Function to move to the previous project
+  const moveToPreviousProject = () => {
+    setActiveProjectIndex((prevIndex) =>
+      prevIndex === 0 ? projectsData.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Start the auto-scroll timer
+  const startAutoScroll = () => {
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+    }
+    autoScrollIntervalRef.current = setInterval(moveToNextProject, 5000); // Scroll every 5 seconds
+  };
+
+  // Stop the auto-scroll timer
+  const stopAutoScroll = () => {
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+    }
+  };
+
+  // Effect for auto-scrolling
   useEffect(() => {
-    // Smooth scrolling (remains the same)
+    startAutoScroll();
+
+    // Cleanup on component unmount
+    return () => {
+      stopAutoScroll();
+    };
+  }, [activeProjectIndex]); // Restart interval if activeProjectIndex changes (e.g., manual scroll)
+
+  // Effect for smooth scrolling to anchor links
+  useEffect(() => {
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
     anchorLinks.forEach(link => {
       link.addEventListener('click', function (e) {
@@ -221,6 +293,7 @@ const Portfolio = () => {
       });
     });
   }, []);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -297,7 +370,7 @@ const Portfolio = () => {
             <Grid item xs={12} md={6}>
               <motion.div variants={itemVariants}>
                 <Typography variant="h1">
-                  Kevin loun
+                  Kevin Loun
                 </Typography>
                 <Typography variant="h2" color="text.secondary" gutterBottom>
                   Associate Analyst, App Development
@@ -326,7 +399,7 @@ const Portfolio = () => {
                     <IconButton
                       color="primary"
                       aria-label="github"
-                      href="https://www.linkedin.com/in/kevin-loun/"
+                      href="https://www.linkedin.com/in/kevin-loun/" // Consider changing to GitHub link
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -353,7 +426,7 @@ const Portfolio = () => {
       {/* --- END of Hero Section --- */}
 
 
-      {/* --- REST OF THE SECTIONS (About, Skills, Education, Projects, Contact, Footer) remain the same as the previous version --- */}
+      {/* --- REST OF THE SECTIONS (About, Skills, Education, Contact, Footer) remain the same as the previous version --- */}
 
       {/* About Section */}
        <Box
@@ -369,7 +442,7 @@ const Portfolio = () => {
          </Typography>
          <Paper elevation={3} sx={{ p: 6, maxWidth: 900, mx: 'auto' }}>
            <Typography variant="body1">
-           With a strong foundation in mathematics, statistics, and data science, I began my career exploring the power of data—uncovering patterns, building models, and drawing meaningful insights to drive decision-making. Over time, I discovered a growing interest in the systems that power enterprise-scale data environments, which led me to the world of mainframes. 
+           With a strong foundation in mathematics, statistics, and data science, I began my career exploring the power of data—uncovering patterns, building models, and drawing meaningful insights to drive decision-making. Over time, I discovered a growing interest in the systems that power enterprise-scale data environments, which led me to the world of mainframes.
            </Typography>
            <Typography variant="body1" sx={{ mt: 3 }}>
            Today, I work as a Mainframe Analyst, leveraging both my analytical background and technical skills to support and optimize legacy systems that are critical to large organizations. My unique path allows me to bring a data-driven mindset to complex system maintenance and modernization efforts, bridging the gap between traditional infrastructure and modern analytical thinking.
@@ -445,7 +518,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       IMS 
+                       IMS
                      </Typography>
                    </Stack>
                  </Paper>
@@ -491,7 +564,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       QMF 
+                       QMF
                      </Typography>
                    </Stack>
                  </Paper>
@@ -510,7 +583,7 @@ const Portfolio = () => {
                      </Typography>
                      <Typography variant="body1">
                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       Agile 
+                       Agile
                      </Typography>
                    </Stack>
                  </Paper>
@@ -583,7 +656,7 @@ const Portfolio = () => {
                      Pomona College
                    </Typography>
                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                     Claremont, CA 
+                     Claremont, CA
                    </Typography>
                    <Typography variant="body1" paragraph sx={{ mt: 2 }}>
                    Emphasized coursework in probability, statistics, and applied mathematics with a strong focus on data-driven problem solving. Gained foundational experience in data analytics and data science principles, including statistical modeling, data visualization, and predictive analysis. Developed a deep analytical mindset and proficiency in interpreting complex datasets to support evidence-based decision-making.
@@ -592,73 +665,115 @@ const Portfolio = () => {
                </motion.div>
              </Grid>
              {/* Example Education Item 2: Certification */}
-        
+
              {/* Add more Grid items for other degrees/certifications */}
            </Grid>
          </motion.div>
        </Box>
 
-       {/* Projects Section */}
+       {/* --- MODIFIED Projects Section --- */}
        <Box
          id="projects"
          sx={{
            py: 10,
            px: { xs: 4, md: 8 },
            bgcolor: 'background.default',
+           display: 'flex',
+           flexDirection: 'column',
+           alignItems: 'center',
          }}
        >
          <Typography variant="h2" align="center" gutterBottom>
            Projects
          </Typography>
-         <motion.div
-           variants={containerVariants}
-           initial="hidden"
-           animate="visible"
-           style={{ width: '100%' }}
+
+         {/* Carousel Container */}
+         <Box
+           ref={carouselRef} // Attach ref
+           sx={{
+             width: '100%',
+             maxWidth: 700, // Limit the carousel width
+             height: PROJECT_ITEM_HEIGHT, // Fixed height to show one project at a time
+             overflow: 'hidden',
+             position: 'relative', // Needed for absolute positioning of controls
+             mx: 'auto', // Center the carousel
+             mt: 4, // Margin top
+             boxShadow: '0 4px 8px rgba(0,0,0,.15)', // Optional shadow for the carousel container
+             borderRadius: '0', // Keeps the square style
+           }}
+           onMouseEnter={stopAutoScroll} // Pause on hover
+           onMouseLeave={startAutoScroll} // Resume on mouse leave
          >
-           <Grid container spacing={6} justifyContent="center">
-             <Grid item xs={12} md={6} lg={5}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={3} sx={{ p: 4, height: '100%' }}>
-                   <Typography variant="h3" gutterBottom>
-                   Shinjuku ObjectDetection
-                   </Typography>
-                   <Typography
-                     variant="h5"
-                     color="text.secondary"
-                     gutterBottom
+           {/* Carousel Items Container */}
+           <motion.div
+             animate={{ y: -activeProjectIndex * PROJECT_ITEM_HEIGHT }} // Animate the y position
+             transition={{ type: 'tween', duration: 0.5 }} // Smooth tween animation
+             style={{ display: 'flex', flexDirection: 'column' }} // Stack items vertically
+           >
+             <AnimatePresence initial={false}> {/* Use AnimatePresence for exit animations if needed later */}
+               {projectsData.map((project, index) => (
+                 // Use motion.div for each project item for potential individual animations
+                 <motion.div
+                   key={index}
+                   // You can add individual item animations here if desired,
+                   // but animating the container is simpler for a scroll effect.
+                   // initial={{ opacity: 0, y: 50 }}
+                   // animate={{ opacity: 1, y: 0 }}
+                   // exit={{ opacity: 0, y: -50 }}
+                   // transition={{ duration: 0.3 }}
+                 >
+                   <Paper
+                     elevation={3}
+                     sx={{
+                       p: 4,
+                       width: '100%',
+                       height: PROJECT_ITEM_HEIGHT, // Fixed height for each item
+                       boxSizing: 'border-box', // Include padding in height
+                       display: 'flex',
+                       flexDirection: 'column',
+                       justifyContent: 'center', // Center content vertically
+                     }}
                    >
-                     The Shibuya Crossing Pedestrian Detector is a deep learning project aimed at detecting pedestrians crossing the street at the iconic Shibuya Crossing in Tokyo. 
-                     This project utilizes state-of-the-art object detection techniques to identify pedestrians in real-time footage. The project was coded in Python and 
-                     The model is trained using the CrowdHuman dataset then fine-tuned using the MMdetection framework for transfer learning.
-                   </Typography>
-                   <Typography variant="body1" paragraph>
-                   </Typography>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             <Grid item xs={12} md={6} lg={5}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={3} sx={{ p: 4, height: '100%' }}>
-                   <Typography variant="h3" gutterBottom>
-                   Petal Planner 🌱
-                   </Typography>
-                   <Typography
-                     variant="h5"
-                     color="text.secondary"
-                     gutterBottom
-                   >
-                    A web application built with Python Flask (backend) and HTML/CSS (frontend) designed to boost productivity through daily motivational 
-                    quotes and a gamified to-do list. Users can sign up and log in securely via OAuth, with encrypted credentials stored in a SQL database. 
-                    Each completed task helps grow a personalized digital plant, turning productivity into a thriving virtual garden.
-                   </Typography>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             {/* Add more project items as needed */}
-           </Grid>
-         </motion.div>
+                     <Typography variant="h3" gutterBottom>
+                       {project.title}
+                     </Typography>
+                     <Typography variant="body1" paragraph> {/* Changed to body1 for readability */}
+                       {project.description}
+                     </Typography>
+                     {project.link && (
+                       <Button
+                         variant="outlined"
+                         href={project.link}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         sx={{ mt: 2, alignSelf: 'flex-start' }} // Align button to the left
+                       >
+                         Learn More
+                       </Button>
+                     )}
+                   </Paper>
+                 </motion.div>
+               ))}
+             </AnimatePresence>
+           </motion.div>
+         </Box>
+
+         {/* Carousel Navigation Controls */}
+         <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
+           <Tooltip title="Previous Project">
+             <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToPreviousProject(); }}>
+               <ArrowUpwardIcon fontSize="large" />
+             </IconButton>
+           </Tooltip>
+           <Tooltip title="Next Project">
+             <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToNextProject(); }}>
+               <ArrowDownwardIcon fontSize="large" />
+             </IconButton>
+           </Tooltip>
+         </Stack>
        </Box>
+       {/* --- END of MODIFIED Projects Section --- */}
+
 
        {/* Contact Section */}
        <Box
@@ -700,14 +815,14 @@ const Portfolio = () => {
                  <GitHub sx={{ fontSize: 40, color: '#111' }} />
                </IconButton>
              </Tooltip>
-          
+
            </Stack>
            <Typography
              variant="body2"
              align="center"
              sx={{ mt: 3, color: 'text.secondary' }}
            >
-             
+
            </Typography>
          </Paper>
        </Box>
@@ -715,7 +830,7 @@ const Portfolio = () => {
        {/* Footer */}
        <Box sx={{ bgcolor: '#111', color: '#aaa', py: 3, textAlign: 'center' }}>
          <Typography variant="body2">
-           &copy; {new Date().getFullYear()} Your Name. All rights reserved.
+           &copy; {new Date().getFullYear()} Kevin Loun. All rights reserved.
          </Typography>
        </Box>
 
