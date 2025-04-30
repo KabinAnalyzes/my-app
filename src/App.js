@@ -399,7 +399,7 @@ const Portfolio = () => {
                     <IconButton
                       color="primary"
                       aria-label="github"
-                      href="https://www.linkedin.com/in/kevin-loun/" // Consider changing to GitHub link
+                      href="https://github.com/KabinAnalyzes?tab=repositories" // Corrected GitHub link
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -671,7 +671,7 @@ const Portfolio = () => {
          </motion.div>
        </Box>
 
-       {/* --- MODIFIED Projects Section --- */}
+       {/* --- Integrated Projects Section (Vertical Carousel) --- */}
        <Box
          id="projects"
          sx={{
@@ -688,91 +688,105 @@ const Portfolio = () => {
          </Typography>
 
          {/* Carousel Container */}
-         <Box
-           ref={carouselRef} // Attach ref
-           sx={{
-             width: '100%',
-             maxWidth: 700, // Limit the carousel width
-             height: PROJECT_ITEM_HEIGHT, // Fixed height to show one project at a time
-             overflow: 'hidden',
-             position: 'relative', // Needed for absolute positioning of controls
-             mx: 'auto', // Center the carousel
-             mt: 4, // Margin top
-             boxShadow: '0 4px 8px rgba(0,0,0,.15)', // Optional shadow for the carousel container
-             borderRadius: '0', // Keeps the square style
-           }}
-           onMouseEnter={stopAutoScroll} // Pause on hover
-           onMouseLeave={startAutoScroll} // Resume on mouse leave
-         >
-           {/* Carousel Items Container */}
-           <motion.div
-             animate={{ y: -activeProjectIndex * PROJECT_ITEM_HEIGHT }} // Animate the y position
-             transition={{ type: 'tween', duration: 0.5 }} // Smooth tween animation
-             style={{ display: 'flex', flexDirection: 'column' }} // Stack items vertically
-           >
-             <AnimatePresence initial={false}> {/* Use AnimatePresence for exit animations if needed later */}
-               {projectsData.map((project, index) => (
-                 // Use motion.div for each project item for potential individual animations
-                 <motion.div
-                   key={index}
-                   // You can add individual item animations here if desired,
-                   // but animating the container is simpler for a scroll effect.
-                   // initial={{ opacity: 0, y: 50 }}
-                   // animate={{ opacity: 1, y: 0 }}
-                   // exit={{ opacity: 0, y: -50 }}
-                   // transition={{ duration: 0.3 }}
-                 >
-                   <Paper
-                     elevation={3}
-                     sx={{
-                       p: 4,
-                       width: '100%',
-                       height: PROJECT_ITEM_HEIGHT, // Fixed height for each item
-                       boxSizing: 'border-box', // Include padding in height
-                       display: 'flex',
-                       flexDirection: 'column',
-                       justifyContent: 'center', // Center content vertically
-                     }}
-                   >
-                     <Typography variant="h3" gutterBottom>
-                       {project.title}
-                     </Typography>
-                     <Typography variant="body1" paragraph> {/* Changed to body1 for readability */}
-                       {project.description}
-                     </Typography>
-                     {project.link && (
-                       <Button
-                         variant="outlined"
-                         href={project.link}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         sx={{ mt: 2, alignSelf: 'flex-start' }} // Align button to the left
-                       >
-                         Learn More
-                       </Button>
-                     )}
-                   </Paper>
-                 </motion.div>
-               ))}
-             </AnimatePresence>
-           </motion.div>
-         </Box>
+         {/* Using Grid to potentially align carousel next to other content if needed */}
+         <Grid container spacing={6} justifyContent="center" alignItems="center">
+            <Grid item xs={12} md={8} lg={6}> {/* Adjust grid size as needed */}
+                <Box
+                  ref={carouselRef} // Attach ref
+                  sx={{
+                    width: '100%',
+                    maxWidth: 700, // Limit the carousel width
+                    height: PROJECT_ITEM_HEIGHT, // Fixed height to show one project at a time
+                    overflow: 'hidden',
+                    position: 'relative', // Needed for absolute positioning of controls
+                    mx: 'auto', // Center the carousel within its grid item
+                    mt: 4, // Margin top
+                    boxShadow: '0 4px 8px rgba(0,0,0,.15)', // Optional shadow for the carousel container
+                    borderRadius: '0', // Keeps the square style
+                  }}
+                  onMouseEnter={stopAutoScroll} // Pause on hover
+                  onMouseLeave={startAutoScroll} // Resume on mouse leave
+                >
+                  {/* Carousel Items Container */}
+                  <motion.div
+                    animate={{ y: -activeProjectIndex * PROJECT_ITEM_HEIGHT }} // Animate the y position
+                    transition={{ type: 'tween', duration: 0.5 }} // Smooth tween animation
+                    style={{ display: 'flex', flexDirection: 'column' }} // Stack items vertically
+                  >
+                    <AnimatePresence initial={false}> {/* Use AnimatePresence for exit animations if needed later */}
+                      {projectsData.map((project, index) => (
+                        // Use motion.div for each project item for potential individual animations
+                        <motion.div
+                          key={index}
+                          // initial={{ opacity: 0, y: 50 }} // Example individual item animation
+                          // animate={{ opacity: 1, y: 0 }}
+                          // exit={{ opacity: 0, y: -50 }}
+                          // transition={{ duration: 0.3 }}
+                        >
+                          <Paper
+                            elevation={3}
+                            sx={{
+                              p: 4,
+                              width: '100%',
+                              height: PROJECT_ITEM_HEIGHT, // Fixed height for each item
+                              boxSizing: 'border-box', // Include padding in height
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center', // Center content vertically
+                            }}
+                          >
+                            <Typography variant="h3" gutterBottom>
+                              {project.title}
+                            </Typography>
+                            <Typography variant="body1" paragraph> {/* Changed to body1 for readability */}
+                              {project.description}
+                            </Typography>
+                            {project.link && (
+                              <Button
+                                variant="outlined"
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                sx={{ mt: 2, alignSelf: 'flex-start' }} // Align button to the left
+                              >
+                                Learn More
+                              </Button>
+                            )}
+                          </Paper>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </motion.div>
+                </Box>
 
-         {/* Carousel Navigation Controls */}
-         <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
-           <Tooltip title="Previous Project">
-             <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToPreviousProject(); }}>
-               <ArrowUpwardIcon fontSize="large" />
-             </IconButton>
-           </Tooltip>
-           <Tooltip title="Next Project">
-             <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToNextProject(); }}>
-               <ArrowDownwardIcon fontSize="large" />
-             </IconButton>
-           </Tooltip>
-         </Stack>
+                {/* Carousel Navigation Controls */}
+                <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
+                  <Tooltip title="Previous Project">
+                    <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToPreviousProject(); }}>
+                      <ArrowUpwardIcon fontSize="large" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Next Project">
+                    <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToNextProject(); }}>
+                      <ArrowDownwardIcon fontSize="large" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+            </Grid>
+
+            {/* Optional: Add another grid item here for text or image next to the carousel */}
+            {/* <Grid item xs={12} md={4} lg={3}>
+                <Paper elevation={1} sx={{ p: 4, textAlign: 'center', height: '100%' }}>
+                    <Typography variant="h4" gutterBottom>Project Showcase</Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        Browse through some of my recent work below.
+                    </Typography>
+                </Paper>
+            </Grid> */}
+
+         </Grid>
        </Box>
-       {/* --- END of MODIFIED Projects Section --- */}
+       {/* --- END of Integrated Projects Section --- */}
 
 
        {/* Contact Section */}
