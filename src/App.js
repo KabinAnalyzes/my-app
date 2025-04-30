@@ -212,26 +212,26 @@ const projectsData = [
     title: 'Shinjuku Object Detection',
     description:
       'The Shibuya Crossing Pedestrian Detector is a deep learning project aimed at detecting pedestrians crossing the street at the iconic Shibuya Crossing in Tokyo. This project utilizes state-of-the-art object detection techniques to identify pedestrians in real-time footage. The project was coded in Python and the model is trained using the CrowdHuman dataset then fine-tuned using the MMdetection framework for transfer learning.',
-    link: 'https://github.com/your-github/shinjuku-object-detection', // Add your actual project link
+    link: 'https://github.com/KabinAnalyzes/Shinjuku-ObjectDetection', // Add your actual project link
   },
   {
     title: 'Petal Planner 🌱',
     description:
       'A web application built with Python Flask (backend) and HTML/CSS (frontend) designed to boost productivity through daily motivational quotes and a gamified to-do list. Users can sign up and log in securely via OAuth, with encrypted credentials stored in a SQL database. Each completed task helps grow a personalized digital plant, turning productivity into a thriving virtual garden.',
-    link: 'https://github.com/your-github/petal-planner', // Add your actual project link
+    link: 'https://github.com/KabinAnalyzes/PetalPlanner', // Add your actual project link
   },
-  {
-    title: 'Another Cool Project', // Add more projects
-    description:
-      'Description for another cool project. Detail the technologies used and the purpose of the project.',
-    link: 'https://github.com/your-github/another-project', // Add your actual project link
-  },
-    {
-    title: 'Yet Another Project', // Add more projects
-    description:
-      'Description for yet another project. Detail the technologies used and the purpose of the project.',
-    link: 'https://github.com/your-github/yet-another-project', // Add your actual project link
-  },
+ // {
+   // title: 'Another Cool Project', // Add more projects
+    //description:
+     // 'Description for another cool project. Detail the technologies used and the purpose of the project.',
+   // link: 'https://github.com/your-github/another-project', // Add your actual project link
+ // },
+  //  {
+   // title: 'Yet Another Project', // Add more projects
+   // description:
+   //   'Description for yet another project. Detail the technologies used and the purpose of the project.',
+   // link: 'https://github.com/your-github/yet-another-project', // Add your actual project link
+ // },
 ];
 
 // Define a consistent height for each project item in the carousel
