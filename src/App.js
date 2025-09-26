@@ -1,854 +1,596 @@
-import { useEffect, useState, useRef } from 'react'; // Import useRef
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Grid,
-  Paper,
-  Avatar,
-  IconButton,
-  Tooltip,
-  Stack,
-  // Divider, // Removed if not used elsewhere
-  Fade // Import Fade for smooth entry
-} from '@mui/material';
-import { LinkedIn, GitHub, Email, School, Code, TrendingUp } from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
-import { SvgIcon } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-// --- THEME, ANIMATIONS, ICONS remain the same ---
-// Custom theme (remains the same)
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#222', // Very dark grey, almost black
-      light: '#444',
-      dark: '#000',
-      contrastText: '#fff',
-    },
-    secondary: {
-      main: '#888', // Slightly lighter medium grey
-      light: '#bbb',
-      dark: '#666',
-      contrastText: '#fff',
-    },
-    background: {
-      default: '#f9f9f9', // Very light grey
-      paper: '#fff',
-    },
-    text: {
-      primary: '#111', // Almost black
-      secondary: '#666', // Slightly darker medium grey
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Roboto font
-    h1: {
-      fontWeight: 700,
-      fontSize: '3rem',
-      lineHeight: 1.1,
-      marginBottom: '1rem',
-      color: '#111',
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2.25rem',
-      lineHeight: 1.2,
-      marginBottom: '0.75rem',
-      color: '#111',
-    },
-    h3: {
-      fontWeight: 500,
-      fontSize: '1.75rem',
-      lineHeight: 1.3,
-      marginBottom: '0.5rem',
-      color: '#111',
-    },
-    h4: {
-      fontWeight: 500,
-      fontSize: '1.5rem',
-      lineHeight: 1.4,
-      marginBottom: '0.5rem',
-      color: '#111',
-    },
-    h5: {
-      fontWeight: 500,
-      fontSize: '1.25rem',
-      lineHeight: 1.5,
-      marginBottom: '0.5rem',
-      color: '#111',
-    },
-    h6: {
-      fontWeight: 400,
-      fontSize: '1rem',
-      lineHeight: 1.6,
-      marginBottom: '0.5rem',
-      color: '#111',
-    },
-    body1: {
-      fontSize: '1rem',
-      lineHeight: 1.7,
-      color: '#333',
-    },
-    body2: {
-      fontSize: '0.875rem',
-      lineHeight: 1.5,
-      color: '#555',
-    },
-    caption: {
-      fontSize: '0.75rem',
-      lineHeight: 1.4,
-      color: '#777',
-    },
-  },
-  components: {
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 1px 3px rgba(0,0,0,.1)',
-          backgroundColor: '#fff',
-        },
-      },
-    },
-    MuiToolbar: {
-      styleOverrides: {
-        root: {
-          color: '#111',
-        }
-      }
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          fontWeight: 600,
-          borderRadius: '0',
-          padding: '0.75rem 1.5rem',
-          color: '#111',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-          },
-        },
-        contained: {
-          boxShadow: '0 2px 5px rgba(0,0,0,.2)',
-          backgroundColor: '#222',
-          color: '#fff',
-          '&:hover': {
-            backgroundColor: '#333',
-          },
-        },
-        outlined: {
-          borderColor: '#888',
-          color: '#111',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: '0',
-          boxShadow: '0 2px 6px rgba(0,0,0,.1)',
-          backgroundColor: '#fff',
-        },
-      },
-    },
-    MuiAvatar: {
-      styleOverrides: {
-        root: {
-          borderRadius: '0', // Keeping the square avatar style
-        }
-      }
-    },
-    MuiDivider: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#ddd',
-        },
-      },
-    },
-  },
-});
-
-// Animation variants (remains the same)
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
-};
-
-// Custom Python Icon Component (remains the same)
-const PythonIcon = (props) => (
-  <SvgIcon {...props} viewBox="0 0 512 512">
-    <path
-      fill="currentColor"
-      d="M471.62 131.57c7.41-22.83 6.65-48.74-1.92-70.83-10.15-28-31.42-51.55-59.91-62.1-13.6-5-27.42-7.6-41.13-7.6h-73.27c-13.71 0-27.54 2.6-41.13 7.6-28.49 10.55-49.76 34.1-59.91 62.1-8.57 22.1-9.33 48-1.92 70.83l62.7 193.92v115.15h-83.1c-16.1 0-29.1 13-29.1 29.1 0 16.1 13 29.1 29.1 29.1h249.4c16.1 0 29.1-13 29.1-29.1 0-16.1-13-29.1-29.1-29.1h-83.1v-115.15l62.7-193.92z"
-    />
-  </SvgIcon>
-);
-// --- END of unchanged sections ---
-
-// --- PROJECT DATA ---
-const projectsData = [
-  {
-    title: 'Shinjuku Object Detection',
-    description:
-      'The Shibuya Crossing Pedestrian Detector is a deep learning project aimed at detecting pedestrians crossing the street at the iconic Shibuya Crossing in Tokyo. This project utilizes state-of-the-art object detection techniques to identify pedestrians in real-time footage. The project was coded in Python and the model is trained using the CrowdHuman dataset then fine-tuned using the MMdetection framework for transfer learning.',
-    link: 'https://github.com/KabinAnalyzes/Shinjuku-ObjectDetection', // Add your actual project link
-  },
-  {
-    title: 'Petal Planner 🌱',
-    description:
-      'A web application built with Python Flask (backend) and HTML/CSS (frontend) designed to boost productivity through daily motivational quotes and a gamified to-do list. Users can sign up and log in securely via OAuth, with encrypted credentials stored in a SQL database. Each completed task helps grow a personalized digital plant, turning productivity into a thriving virtual garden.',
-    link: 'https://github.com/KabinAnalyzes/PetalPlanner', // Add your actual project link
-  },
- // {
-   // title: 'Another Cool Project', // Add more projects
-    //description:
-     // 'Description for another cool project. Detail the technologies used and the purpose of the project.',
-   // link: 'https://github.com/your-github/another-project', // Add your actual project link
- // },
-  //  {
-   // title: 'Yet Another Project', // Add more projects
-   // description:
-   //   'Description for yet another project. Detail the technologies used and the purpose of the project.',
-   // link: 'https://github.com/your-github/yet-another-project', // Add your actual project link
- // },
-];
-
-// Define a consistent height for each project item in the carousel
-const PROJECT_ITEM_HEIGHT = 300; // Adjust as needed
+import React, { useState, useEffect, useRef } from 'react';
+import { Github, Linkedin, Mail, ExternalLink, Moon, Sun, Code2, Briefcase, User, Home, Menu, X, ChevronDown, Terminal, Cpu, Database, Globe, Smartphone, Server, GitBranch, Zap, Award, Calendar, MapPin, Download, ArrowRight, Sparkles } from 'lucide-react';
 
 const Portfolio = () => {
-  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const carouselRef = useRef(null); // Ref for the carousel container
-  const autoScrollIntervalRef = useRef(null); // Ref for the interval ID
+  const [darkMode, setDarkMode] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  const [projectFilter, setProjectFilter] = useState('all');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [emailSent, setEmailSent] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const heroRef = useRef(null);
 
-  // Function to move to the next project
-  const moveToNextProject = () => {
-    setActiveProjectIndex((prevIndex) => (prevIndex + 1) % projectsData.length);
-  };
-
-  // Function to move to the previous project
-  const moveToPreviousProject = () => {
-    setActiveProjectIndex((prevIndex) =>
-      prevIndex === 0 ? projectsData.length - 1 : prevIndex - 1
-    );
-  };
-
-  // Start the auto-scroll timer
-  const startAutoScroll = () => {
-    if (autoScrollIntervalRef.current) {
-      clearInterval(autoScrollIntervalRef.current);
-    }
-    autoScrollIntervalRef.current = setInterval(moveToNextProject, 5000); // Scroll every 5 seconds
-  };
-
-  // Stop the auto-scroll timer
-  const stopAutoScroll = () => {
-    if (autoScrollIntervalRef.current) {
-      clearInterval(autoScrollIntervalRef.current);
-    }
-  };
-
-  // Effect for auto-scrolling
+  const fullText = "Full Stack Developer & Creative Problem Solver";
+  
   useEffect(() => {
-    startAutoScroll();
-
-    // Cleanup on component unmount
-    return () => {
-      stopAutoScroll();
-    };
-  }, [activeProjectIndex]); // Restart interval if activeProjectIndex changes (e.g., manual scroll)
-
-  // Effect for smooth scrolling to anchor links
-  useEffect(() => {
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
-    anchorLinks.forEach(link => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
+    let i = 0;
+    const typing = setInterval(() => {
+      if (i < fullText.length) {
+        setTypedText(fullText.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typing);
+      }
+    }, 50);
+    return () => clearInterval(typing);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+      const scrollPosition = window.scrollY + 100;
+      
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: ((e.clientX - rect.left) / rect.width - 0.5) * 20,
+          y: ((e.clientY - rect.top) / rect.height - 0.5) * 20
+        });
+      }
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const skills = [
+    { name: 'React/Next.js', icon: <Code2 className="w-8 h-8" />, level: 95, color: 'from-cyan-400 to-blue-500' },
+    { name: 'Node.js', icon: <Server className="w-8 h-8" />, level: 90, color: 'from-green-400 to-emerald-500' },
+    { name: 'TypeScript', icon: <Terminal className="w-8 h-8" />, level: 88, color: 'from-blue-400 to-indigo-500' },
+    { name: 'Python', icon: <Cpu className="w-8 h-8" />, level: 85, color: 'from-yellow-400 to-orange-500' },
+    { name: 'PostgreSQL', icon: <Database className="w-8 h-8" />, level: 82, color: 'from-purple-400 to-pink-500' },
+    { name: 'AWS/Cloud', icon: <Globe className="w-8 h-8" />, level: 78, color: 'from-orange-400 to-red-500' },
+    { name: 'React Native', icon: <Smartphone className="w-8 h-8" />, level: 75, color: 'from-pink-400 to-rose-500' },
+    { name: 'Git/DevOps', icon: <GitBranch className="w-8 h-8" />, level: 92, color: 'from-gray-400 to-gray-600' }
+  ];
+
+  const projects = [
+    {
+      id: 1,
+      title: 'AI-Powered Analytics Dashboard',
+      description: 'Real-time data visualization platform with ML predictions and automated insights generation.',
+      tech: ['React', 'Python', 'TensorFlow', 'D3.js', 'PostgreSQL'],
+      category: 'fullstack',
+      image: 'https://via.placeholder.com/400x300/4338ca/ffffff?text=Analytics',
+      github: '#',
+      live: '#',
+      featured: true
+    },
+    {
+      id: 2,
+      title: 'E-Commerce Microservices',
+      description: 'Scalable e-commerce platform built with microservices architecture handling 100k+ daily users.',
+      tech: ['Node.js', 'Docker', 'Kubernetes', 'Redis', 'MongoDB'],
+      category: 'backend',
+      image: 'https://via.placeholder.com/400x300/059669/ffffff?text=E-Commerce',
+      github: '#',
+      live: '#',
+      featured: true
+    },
+    {
+      id: 3,
+      title: 'Social Media Mobile App',
+      description: 'Cross-platform social networking app with real-time messaging and video sharing.',
+      tech: ['React Native', 'Firebase', 'WebRTC', 'Redux'],
+      category: 'mobile',
+      image: 'https://via.placeholder.com/400x300/dc2626/ffffff?text=Social+App',
+      github: '#',
+      live: '#',
+      featured: false
+    },
+    {
+      id: 4,
+      title: 'Blockchain Supply Chain',
+      description: 'Decentralized supply chain tracking system ensuring transparency and authenticity.',
+      tech: ['Solidity', 'Web3.js', 'Next.js', 'IPFS'],
+      category: 'blockchain',
+      image: 'https://via.placeholder.com/400x300/7c3aed/ffffff?text=Blockchain',
+      github: '#',
+      live: '#',
+      featured: true
+    },
+    {
+      id: 5,
+      title: 'Health Monitoring IoT Platform',
+      description: 'IoT platform for real-time health monitoring with predictive analytics.',
+      tech: ['Python', 'MQTT', 'React', 'TensorFlow', 'AWS IoT'],
+      category: 'fullstack',
+      image: 'https://via.placeholder.com/400x300/0891b2/ffffff?text=IoT+Health',
+      github: '#',
+      live: '#',
+      featured: false
+    },
+    {
+      id: 6,
+      title: 'Video Streaming Service',
+      description: 'Netflix-clone with adaptive bitrate streaming and recommendation engine.',
+      tech: ['Next.js', 'FFmpeg', 'Redis', 'Elasticsearch'],
+      category: 'fullstack',
+      image: 'https://via.placeholder.com/400x300/b91c1c/ffffff?text=Streaming',
+      github: '#',
+      live: '#',
+      featured: true
+    }
+  ];
+
+  const experience = [
+    {
+      title: 'Senior Full Stack Developer',
+      company: 'Tech Innovations Inc.',
+      period: '2022 - Present',
+      location: 'San Francisco, CA',
+      description: 'Led development of microservices architecture, improving system performance by 40%. Mentored junior developers and implemented CI/CD pipelines.',
+      achievements: ['Reduced load time by 60%', 'Led team of 5 developers', 'Implemented automated testing']
+    },
+    {
+      title: 'Full Stack Developer',
+      company: 'Digital Solutions Ltd.',
+      period: '2020 - 2022',
+      location: 'Remote',
+      description: 'Developed and maintained multiple client projects using React and Node.js. Collaborated with design team to create responsive web applications.',
+      achievements: ['Delivered 15+ projects', 'Improved SEO scores by 80%', 'Reduced bug reports by 45%']
+    },
+    {
+      title: 'Junior Developer',
+      company: 'StartUp Hub',
+      period: '2018 - 2020',
+      location: 'Austin, TX',
+      description: 'Worked on front-end development using React and contributed to backend APIs. Participated in agile development process.',
+      achievements: ['Built 3 production apps', 'Learned 5 new technologies', 'Contributed to open source']
+    }
+  ];
+
+  const filteredProjects = projectFilter === 'all' 
+    ? projects 
+    : projects.filter(p => p.category === projectFilter);
+
+  const navItems = [
+    { id: 'home', icon: <Home className="w-5 h-5" />, label: 'Home' },
+    { id: 'about', icon: <User className="w-5 h-5" />, label: 'About' },
+    { id: 'skills', icon: <Code2 className="w-5 h-5" />, label: 'Skills' },
+    { id: 'projects', icon: <Briefcase className="w-5 h-5" />, label: 'Projects' },
+    { id: 'experience', icon: <Award className="w-5 h-5" />, label: 'Experience' },
+    { id: 'contact', icon: <Mail className="w-5 h-5" />, label: 'Contact' }
+  ];
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setEmailSent(true);
+    setTimeout(() => {
+      setFormData({ name: '', email: '', message: '' });
+      setEmailSent(false);
+    }, 3000);
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-      {/* AppBar remains the same */}
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h1" component="div" sx={{ flexGrow: 1 }}>
-            Kevin Loun
-          </Typography>
-          <Button color="inherit" href="#about">
-            About
-          </Button>
-          <Button color="inherit" href="#skills">
-            Skills
-          </Button>
-          <Button color="inherit" href="#education">
-            Education
-          </Button>
-          <Button color="inherit" href="#projects">
-            Projects
-          </Button>
-          <Button color="inherit" href="#contact">
-            Contact
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <div className={`min-h-screen transition-all duration-500 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-cyan-900/20' : 'bg-gradient-to-br from-purple-200/30 via-blue-200/30 to-cyan-200/30'}`} />
+        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-500/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }} />
+      </div>
 
-      {/* --- MODIFIED Hero Section --- */}
-      <Box
-        sx={{
-          py: 12,
-          px: { xs: 4, md: 8 },
-          maxWidth: 1400,
-          mx: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          style={{ width: '100%' }}
-        >
-          <Grid container spacing={6} alignItems="center">
-            {/* --- AVATAR Grid Item (Now first) --- */}
-            <Grid item xs={12} md={6}>
-              <motion.div variants={itemVariants}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    // Adjust justification based on screen size if needed
-                    justifyContent: { xs: 'center', md: 'flex-end' }, // Center on small, right-align on medium+
-                    paddingRight: { md: 4 } // Add some padding on the right for md+ screens
-                  }}
+      {/* Navigation */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-lg ${darkMode ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200'} border-b`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-8 h-8 text-purple-500" />
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">DevPortfolio</span>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-6">
+              {navItems.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all duration-300 ${
+                    activeSection === item.id 
+                      ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white' 
+                      : darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+                  }`}
                 >
-                  <Avatar
-                    alt="Your Profile Picture"
-                    src="/PFP.JPG"// Update this path
-                    sx={{
-                      width: 250,
-                      height: 250,
-                      boxShadow: '0 4px 8px rgba(0,0,0,.15)',
-                      border: '4px solid #fff',
-                      // borderRadius: '0' // Kept from theme override
-                    }}
-                  />
-                </Box>
-              </motion.div>
-            </Grid>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className={`p-2 rounded-lg transition-all duration-300 ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
 
-            {/* --- TEXT/LINKS Grid Item (Now second) --- */}
-            <Grid item xs={12} md={6}>
-              <motion.div variants={itemVariants}>
-                <Typography variant="h1">
-                  Kevin Loun
-                </Typography>
-                <Typography variant="h2" color="text.secondary" gutterBottom>
-                  Associate Analyst, App Development
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  A highly motivated and results-oriented Mainframe COBOL
-                  developer with 1 year of experience in designing,
-                  developing, and maintaining critical business applications.
-                  Proficient in COBOL, JCL, DB2, VSAM, and other mainframe
-                  technologies. Passionate about leveraging robust mainframe
-                  capabilities to deliver efficient and reliable solutions.
-                </Typography>
-                <Stack direction="row" spacing={2} mt={2}>
-                  <Tooltip title="LinkedIn Profile">
-                    <IconButton
-                      color="primary"
-                      aria-label="linkedin"
-                      href="https://www.linkedin.com/in/kevin-loun/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <LinkedIn />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="GitHub Profile">
-                    <IconButton
-                      color="primary"
-                      aria-label="github"
-                      href="https://github.com/KabinAnalyzes?tab=repositories" // Corrected GitHub link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <GitHub />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Email Me">
-                    <IconButton
-                      color="primary"
-                      aria-label="email"
-                      href="mailto:kvn.loun@gmail.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Email />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              </motion.div>
-            </Grid>
-          </Grid>
-        </motion.div>
-      </Box>
-      {/* --- END of Hero Section --- */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
 
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className={`md:hidden absolute top-16 left-0 right-0 ${darkMode ? 'bg-gray-900/95' : 'bg-white/95'} backdrop-blur-lg border-b ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+            <div className="px-4 py-4 space-y-2">
+              {navItems.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`flex items-center space-x-2 w-full px-4 py-3 rounded-lg transition-all ${
+                    activeSection === item.id 
+                      ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white' 
+                      : darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
 
-      {/* --- REST OF THE SECTIONS (About, Skills, Education, Contact, Footer) remain the same as the previous version --- */}
+      {/* Hero Section */}
+      <section id="home" ref={heroRef} className="min-h-screen flex items-center justify-center relative px-4 pt-16">
+        <div 
+          className="text-center z-10 max-w-4xl mx-auto"
+          style={{ transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)` }}
+        >
+          <div className="mb-6 inline-block">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 p-1 animate-pulse">
+              <div className={`w-full h-full rounded-full ${darkMode ? 'bg-gray-900' : 'bg-white'} flex items-center justify-center`}>
+                <Terminal className="w-16 h-16 text-purple-500" />
+              </div>
+            </div>
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent animate-gradient">
+              John Developer
+            </span>
+          </h1>
+          
+          <div className="h-16 mb-8">
+            <p className="text-xl md:text-2xl text-gray-400">
+              {typedText}<span className="animate-pulse">|</span>
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <a href="#" className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+              <Download className="w-5 h-5" />
+              <span>Download CV</span>
+            </a>
+            <button onClick={() => scrollToSection('contact')} className={`flex items-center space-x-2 px-6 py-3 rounded-full border-2 ${darkMode ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'} transform hover:scale-105 transition-all duration-300`}>
+              <Mail className="w-5 h-5" />
+              <span>Get In Touch</span>
+            </button>
+          </div>
+          
+          <div className="flex justify-center space-x-6">
+            <a href="#" className={`p-3 rounded-full ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'} transform hover:scale-110 transition-all duration-300`}>
+              <Github className="w-6 h-6" />
+            </a>
+            <a href="#" className={`p-3 rounded-full ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'} transform hover:scale-110 transition-all duration-300`}>
+              <Linkedin className="w-6 h-6" />
+            </a>
+            <a href="#" className={`p-3 rounded-full ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'} transform hover:scale-110 transition-all duration-300`}>
+              <Mail className="w-6 h-6" />
+            </a>
+          </div>
+        </div>
+        
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ChevronDown className="w-8 h-8 text-gray-400" />
+        </div>
+      </section>
 
       {/* About Section */}
-       <Box
-         id="about"
-         sx={{
-           py: 10,
-           px: { xs: 4, md: 8 },
-           bgcolor: 'background.paper',
-         }}
-       >
-         <Typography variant="h2" align="center" gutterBottom>
-           About Me
-         </Typography>
-         <Paper elevation={3} sx={{ p: 6, maxWidth: 900, mx: 'auto' }}>
-           <Typography variant="body1">
-           With a strong foundation in mathematics, statistics, and data science, I began my career exploring the power of data—uncovering patterns, building models, and drawing meaningful insights to drive decision-making. Over time, I discovered a growing interest in the systems that power enterprise-scale data environments, which led me to the world of mainframes.
-           </Typography>
-           <Typography variant="body1" sx={{ mt: 3 }}>
-           Today, I work as a Mainframe Analyst, leveraging both my analytical background and technical skills to support and optimize legacy systems that are critical to large organizations. My unique path allows me to bring a data-driven mindset to complex system maintenance and modernization efforts, bridging the gap between traditional infrastructure and modern analytical thinking.
-           </Typography>
-         </Paper>
-       </Box>
+      <section id="about" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">About Me</span>
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <p className="text-lg leading-relaxed text-gray-400">
+                Passionate full-stack developer with 6+ years of experience building scalable web applications and innovative digital solutions. I transform complex problems into elegant, user-friendly experiences.
+              </p>
+              <p className="text-lg leading-relaxed text-gray-400">
+                Specializing in modern JavaScript frameworks, cloud architecture, and AI integration. I love exploring emerging technologies and contributing to open-source projects.
+              </p>
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                  <Zap className="w-8 h-8 text-yellow-500 mb-2" />
+                  <h3 className="font-bold mb-1">Fast Learner</h3>
+                  <p className="text-sm text-gray-400">Quick to adapt to new technologies</p>
+                </div>
+                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                  <Award className="w-8 h-8 text-green-500 mb-2" />
+                  <h3 className="font-bold mb-1">Problem Solver</h3>
+                  <p className="text-sm text-gray-400">Creative solutions to complex challenges</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="w-full h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-500/20 to-cyan-500/20 backdrop-blur-lg border border-gray-700">
+                <div className="p-8 h-full flex flex-col justify-center">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-4">
+                      <Calendar className="w-5 h-5 text-purple-500" />
+                      <span>6+ Years Experience</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <MapPin className="w-5 h-5 text-cyan-500" />
+                      <span>San Francisco, CA</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Briefcase className="w-5 h-5 text-pink-500" />
+                      <span>50+ Projects Delivered</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Award className="w-5 h-5 text-yellow-500" />
+                      <span>15+ Tech Stack Mastered</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-       {/* Skills Section */}
-       <Box
-         id="skills"
-         sx={{
-           py: 10,
-           px: { xs: 4, md: 8 },
-           bgcolor: 'background.default',
-         }}
-       >
-         <Typography variant="h2" align="center" gutterBottom>
-           Skills
-         </Typography>
-         <motion.div
-           variants={containerVariants}
-           initial="hidden"
-           animate="visible"
-           style={{ width: '100%' }}
-         >
-           <Grid container spacing={4} justifyContent="center"> {/* Centered skill items */}
-             <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Programming Languages
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       COBOL
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       SQL
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       R & R Studio
-                     </Typography>
-                      <Typography variant="body1">
-                        <PythonIcon sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                        Python
-                      </Typography>
-                      <Typography variant="body1">
-                        <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                        Java
-                      </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             {/* Other Skill Grid Items ... */}
-              <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Databases
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       DB2
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       VSAM
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       IMS
-                     </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Operating Systems
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       z/OS
-                     </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Tools & Technologies
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       TSO/ISPF
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       SDSF
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       Endevor/ChangeMan
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       File-AID
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       QMF
-                     </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Methodologies
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       Waterfall
-                     </Typography>
-                     <Typography variant="body1">
-                       <Code sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                       Agile
-                     </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             <Grid item xs={12} sm={6} md={4} lg={3}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={2} sx={{ p: 4, height: '100%', textAlign: 'center' }}>
-                   <Typography variant="h3" gutterBottom>
-                     Soft Skills
-                   </Typography>
-                   <Stack direction="column" spacing={1} alignItems="center">
-                     <Typography variant="body1">
-                       Problem-solving
-                     </Typography>
-                     <Typography variant="body1">
-                       Analytical skills
-                     </Typography>
-                     <Typography variant="body1">
-                       Communication
-                     </Typography>
-                     <Typography variant="body1">
-                       Teamwork
-                     </Typography>
-                     <Typography variant="body1">
-                       Attention to detail
-                     </Typography>
-                     <Typography variant="body1">
-                        <TrendingUp sx={{ mr: 1, fontSize: 'inherit', verticalAlign: 'middle' }} />
-                        Data Analysis
-                      </Typography>
-                   </Stack>
-                 </Paper>
-               </motion.div>
-             </Grid>
-           </Grid>
-         </motion.div>
-       </Box>
+      {/* Skills Section */}
+      <section id="skills" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">Technical Skills</span>
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {skills.map((skill, i) => (
+              <div key={i} className={`p-6 rounded-xl ${darkMode ? 'bg-gray-800/50' : 'bg-white'} backdrop-blur-lg border ${darkMode ? 'border-gray-700' : 'border-gray-200'} hover:scale-105 transform transition-all duration-300 group`}>
+                <div className={`mb-4 p-3 rounded-lg bg-gradient-to-r ${skill.color} inline-block`}>
+                  {skill.icon}
+                </div>
+                <h3 className="font-bold text-lg mb-2">{skill.name}</h3>
+                <div className="relative h-3 bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    className={`absolute top-0 left-0 h-full bg-gradient-to-r ${skill.color} rounded-full transition-all duration-1000 ease-out`}
+                    style={{ width: `${skill.level}%` }}
+                  />
+                </div>
+                <span className="text-sm text-gray-400 mt-2 inline-block">{skill.level}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-       {/* Education Section */}
-       <Box
-         id="education"
-         sx={{
-           py: 10,
-           px: { xs: 4, md: 8 },
-           bgcolor: 'background.paper',
-         }}
-       >
-         <Typography variant="h2" align="center" gutterBottom>
-           Education
-         </Typography>
-         <motion.div
-           variants={containerVariants}
-           initial="hidden"
-           animate="visible"
-           style={{ width: '100%' }}
-         >
-           <Grid container spacing={4} justifyContent="center">
-             {/* Example Education Item 1: Degree */}
-             <Grid item xs={12} md={6}>
-               <motion.div variants={itemVariants}>
-                 <Paper elevation={3} sx={{ p: 4, height: '100%' }}>
-                    <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-                      <School color="primary" />
-                      <Typography variant="h3">
-                        B.A. Mathematics & Statistics
-                      </Typography>
-                    </Stack>
-                   <Typography variant="h5" color="text.secondary" gutterBottom>
-                     Pomona College
-                   </Typography>
-                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                     Claremont, CA
-                   </Typography>
-                   <Typography variant="body1" paragraph sx={{ mt: 2 }}>
-                   Emphasized coursework in probability, statistics, and applied mathematics with a strong focus on data-driven problem solving. Gained foundational experience in data analytics and data science principles, including statistical modeling, data visualization, and predictive analysis. Developed a deep analytical mindset and proficiency in interpreting complex datasets to support evidence-based decision-making.
-                   </Typography>
-                 </Paper>
-               </motion.div>
-             </Grid>
-             {/* Example Education Item 2: Certification */}
+      {/* Projects Section */}
+      <section id="projects" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">Featured Projects</span>
+          </h2>
+          
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {['all', 'fullstack', 'backend', 'mobile', 'blockchain'].map(filter => (
+              <button
+                key={filter}
+                onClick={() => setProjectFilter(filter)}
+                className={`px-6 py-2 rounded-full capitalize transition-all duration-300 ${
+                  projectFilter === filter 
+                    ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white' 
+                    : darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProjects.map(project => (
+              <div key={project.id} className={`group relative rounded-xl overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'} hover:shadow-2xl transform hover:scale-105 transition-all duration-300`}>
+                {project.featured && (
+                  <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full text-xs font-bold">
+                    Featured
+                  </div>
+                )}
+                <div className="h-48 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4">
+                    <Code2 className="w-12 h-12 text-white/80" />
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                  <p className="text-gray-400 mb-4">{project.description}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tech.map((tech, i) => (
+                      <span key={i} className={`px-3 py-1 text-xs rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex space-x-4">
+                    <a href={project.github} className={`flex items-center space-x-1 ${darkMode ? 'hover:text-purple-400' : 'hover:text-purple-600'} transition-colors`}>
+                      <Github className="w-5 h-5" />
+                      <span>Code</span>
+                    </a>
+                    <a href={project.live} className={`flex items-center space-x-1 ${darkMode ? 'hover:text-cyan-400' : 'hover:text-cyan-600'} transition-colors`}>
+                      <ExternalLink className="w-5 h-5" />
+                      <span>Live Demo</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-             {/* Add more Grid items for other degrees/certifications */}
-           </Grid>
-         </motion.div>
-       </Box>
+      {/* Experience Section */}
+      <section id="experience" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">Work Experience</span>
+          </h2>
+          
+          <div className="space-y-8">
+            {experience.map((exp, i) => (
+              <div key={i} className={`relative pl-8 md:pl-12 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 ${darkMode ? 'before:bg-gray-700' : 'before:bg-gray-300'}`}>
+                <div className="absolute left-0 w-4 h-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full -translate-x-1/2" />
+                <div className={`p-6 rounded-xl ${darkMode ? 'bg-gray-800/50' : 'bg-white'} backdrop-blur-lg border ${darkMode ? 'border-gray-700' : 'border-gray-200'} hover:shadow-xl transition-all duration-300`}>
+                  <div className="flex flex-wrap justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold mb-1">{exp.title}</h3>
+                      <p className="text-purple-500 font-medium">{exp.company}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-400">{exp.period}</p>
+                      <p className="text-sm text-gray-400 flex items-center justify-end mt-1">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        {exp.location}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 mb-4">{exp.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {exp.achievements.map((achievement, j) => (
+                      <span key={j} className="flex items-center space-x-1 text-sm">
+                        <ArrowRight className="w-4 h-4 text-cyan-500" />
+                        <span>{achievement}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-       {/* --- Integrated Projects Section (Vertical Carousel) --- */}
-       <Box
-         id="projects"
-         sx={{
-           py: 10,
-           px: { xs: 4, md: 8 },
-           bgcolor: 'background.default',
-           display: 'flex',
-           flexDirection: 'column',
-           alignItems: 'center',
-         }}
-       >
-         <Typography variant="h2" align="center" gutterBottom>
-           Projects
-         </Typography>
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">Get In Touch</span>
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold mb-4">Let's Connect</h3>
+              <p className="text-gray-400">
+                I'm always open to discussing new opportunities, innovative projects, or just having a chat about technology. Feel free to reach out!
+              </p>
+              
+              <div className="space-y-4">
+                <a href="mailto:john@example.com" className={`flex items-center space-x-3 p-4 rounded-lg ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'} transition-colors`}>
+                  <Mail className="w-5 h-5 text-purple-500" />
+                  <span>john@example.com</span>
+                </a>
+                <a href="#" className={`flex items-center space-x-3 p-4 rounded-lg ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'} transition-colors`}>
+                  <Linkedin className="w-5 h-5 text-blue-500" />
+                  <span>linkedin.com/in/johndeveloper</span>
+                </a>
+                <a href="#" className={`flex items-center space-x-3 p-4 rounded-lg ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'} transition-colors`}>
+                  <Github className="w-5 h-5 text-gray-400" />
+                  <span>github.com/johndeveloper</span>
+                </a>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-300'} border focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all`}
+                required
+              />
+              <input
+                type="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-300'} border focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all`}
+                required
+              />
+              <textarea
+                placeholder="Your Message"
+                rows="5"
+                value={formData.message}
+                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-300'} border focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none`}
+                required
+              />
+              <button
+                type="submit"
+                className={`w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-bold hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${emailSent ? 'opacity-75' : ''}`}
+                disabled={emailSent}
+              >
+                {emailSent ? 'Message Sent!' : 'Send Message'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
 
-         {/* Carousel Container */}
-         {/* Using Grid to potentially align carousel next to other content if needed */}
-         <Grid container spacing={6} justifyContent="center" alignItems="center">
-            <Grid item xs={12} md={8} lg={6}> {/* Adjust grid size as needed */}
-                <Box
-                  ref={carouselRef} // Attach ref
-                  sx={{
-                    width: '100%',
-                    maxWidth: 700, // Limit the carousel width
-                    height: PROJECT_ITEM_HEIGHT, // Fixed height to show one project at a time
-                    overflow: 'hidden',
-                    position: 'relative', // Needed for absolute positioning of controls
-                    mx: 'auto', // Center the carousel within its grid item
-                    mt: 4, // Margin top
-                    boxShadow: '0 4px 8px rgba(0,0,0,.15)', // Optional shadow for the carousel container
-                    borderRadius: '0', // Keeps the square style
-                  }}
-                  onMouseEnter={stopAutoScroll} // Pause on hover
-                  onMouseLeave={startAutoScroll} // Resume on mouse leave
-                >
-                  {/* Carousel Items Container */}
-                  <motion.div
-                    animate={{ y: -activeProjectIndex * PROJECT_ITEM_HEIGHT }} // Animate the y position
-                    transition={{ type: 'tween', duration: 0.5 }} // Smooth tween animation
-                    style={{ display: 'flex', flexDirection: 'column' }} // Stack items vertically
-                  >
-                    <AnimatePresence initial={false}> {/* Use AnimatePresence for exit animations if needed later */}
-                      {projectsData.map((project, index) => (
-                        // Use motion.div for each project item for potential individual animations
-                        <motion.div
-                          key={index}
-                          // initial={{ opacity: 0, y: 50 }} // Example individual item animation
-                          // animate={{ opacity: 1, y: 0 }}
-                          // exit={{ opacity: 0, y: -50 }}
-                          // transition={{ duration: 0.3 }}
-                        >
-                          <Paper
-                            elevation={3}
-                            sx={{
-                              p: 4,
-                              width: '100%',
-                              height: PROJECT_ITEM_HEIGHT, // Fixed height for each item
-                              boxSizing: 'border-box', // Include padding in height
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'center', // Center content vertically
-                            }}
-                          >
-                            <Typography variant="h3" gutterBottom>
-                              {project.title}
-                            </Typography>
-                            <Typography variant="body1" paragraph> {/* Changed to body1 for readability */}
-                              {project.description}
-                            </Typography>
-                            {project.link && (
-                              <Button
-                                variant="outlined"
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                sx={{ mt: 2, alignSelf: 'flex-start' }} // Align button to the left
-                              >
-                                Learn More
-                              </Button>
-                            )}
-                          </Paper>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </motion.div>
-                </Box>
-
-                {/* Carousel Navigation Controls */}
-                <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
-                  <Tooltip title="Previous Project">
-                    <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToPreviousProject(); }}>
-                      <ArrowUpwardIcon fontSize="large" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Next Project">
-                    <IconButton color="primary" onClick={() => { stopAutoScroll(); moveToNextProject(); }}>
-                      <ArrowDownwardIcon fontSize="large" />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-            </Grid>
-
-            {/* Optional: Add another grid item here for text or image next to the carousel */}
-            {/* <Grid item xs={12} md={4} lg={3}>
-                <Paper elevation={1} sx={{ p: 4, textAlign: 'center', height: '100%' }}>
-                    <Typography variant="h4" gutterBottom>Project Showcase</Typography>
-                    <Typography variant="body1" color="text.secondary">
-                        Browse through some of my recent work below.
-                    </Typography>
-                </Paper>
-            </Grid> */}
-
-         </Grid>
-       </Box>
-       {/* --- END of Integrated Projects Section --- */}
-
-
-       {/* Contact Section */}
-       <Box
-         id="contact"
-         sx={{
-           py: 10,
-           px: { xs: 4, md: 8 },
-           bgcolor: 'background.paper',
-         }}
-       >
-         <Typography variant="h2" align="center" gutterBottom>
-           Contact Me
-         </Typography>
-         <Paper elevation={3} sx={{ p: 6, maxWidth: 600, mx: 'auto' }}>
-           <Typography variant="body1" align="center" paragraph>
-             I'm always open to discussing new opportunities and collaborations in the mainframe space. Feel free
-             to reach out!
-           </Typography>
-           <Stack direction="row" justifyContent="center" spacing={3}>
-             <Tooltip title="LinkedIn Profile">
-               <IconButton
-                 color="primary"
-                 aria-label="linkedin"
-                 href="https://www.linkedin.com/in/kevin-loun/" // Add your URL
-                 target="_blank"
-                 rel="noopener noreferrer"
-               >
-                 <LinkedIn sx={{ fontSize: 40, color: '#111' }} />
-               </IconButton>
-             </Tooltip>
-             <Tooltip title="GitHub Profile">
-               <IconButton
-                 color="primary"
-                 aria-label="github"
-                 href="https://github.com/KabinAnalyzes?tab=repositories" // Add your URL
-                 target="_blank"
-                 rel="noopener noreferrer"
-               >
-                 <GitHub sx={{ fontSize: 40, color: '#111' }} />
-               </IconButton>
-             </Tooltip>
-
-           </Stack>
-           <Typography
-             variant="body2"
-             align="center"
-             sx={{ mt: 3, color: 'text.secondary' }}
-           >
-
-           </Typography>
-         </Paper>
-       </Box>
-
-       {/* Footer */}
-       <Box sx={{ bgcolor: '#111', color: '#aaa', py: 3, textAlign: 'center' }}>
-         <Typography variant="body2">
-           &copy; {new Date().getFullYear()} Kevin Loun. All rights reserved.
-         </Typography>
-       </Box>
-
-    </ThemeProvider>
+      {/* Footer */}
+      <footer className={`py-8 px-4 border-t ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-gray-400">
+            © 2024 John Developer. Built with React & Tailwind CSS.
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 };
 
